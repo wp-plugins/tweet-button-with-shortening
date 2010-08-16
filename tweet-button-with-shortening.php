@@ -4,7 +4,7 @@ Plugin Name: Tweet Button with Shortening
 Plugin URI: http://tools.awe.sm/tweet-button/wordpress/
 Description: Add an official Twitter tweet button to your blog and fully configure it through your WP admin, including the ability to use it with your favorite URL shortener (currently awe.sm, bit.ly, tinyurl, su.pr, digg). This plugin is based on the great BackType Tweetcount plugin.
 Version: 0.2
-Author: awe.sm <support+tbws@awe.sm>
+Author: awe.sm
 Author URI: http://totally.awe.sm/
 */
 
