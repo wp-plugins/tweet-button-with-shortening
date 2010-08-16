@@ -3,7 +3,7 @@
 Plugin Name: Tweet Button with Shortening
 Plugin URI: http://tools.awe.sm/tweet-button/wordpress/
 Description: Add an official Twitter tweet button to your blog and fully configure it through your WP admin, including the ability to use it with your favorite URL shortener (currently awe.sm, bit.ly, tinyurl, su.pr, digg). This plugin is based on the great BackType Tweetcount plugin.
-Version: 0.2
+Version: 0.2.1
 Author: awe.sm
 Author URI: http://totally.awe.sm/
 */
@@ -168,7 +168,7 @@ function tbws_options_page() {
 	echo '<tr valign="top"><th scope="row">API Key</th><td><input type="text" name="tbws_api_key" value="' . get_option('tbws_api_key') . '" /> <span class="setting-description">Required: bit.ly, awe.sm, optional: su.pr</span></td></tr>';
 	echo '<tr valign="top"><th scope="row">Login</th><td><input type="text" name="tbws_login" value="' . get_option('tbws_login') . '" /> <span class="setting-description">Required: bit.ly, optional: su.pr</span></td></tr>';
 	echo '</table>';
-	echo '<input type="hidden" name="action" value="update" /><input type="hidden" name="page_options" value="tbws_text,tbws_via,tbws_links,tbws_size,tbws_location,tbws_style,tbws_background,tbws_border,tbws_text,tbws_shortener,tbws_api_key,tbws_login" /><p class="submit"><input type="submit" class="button-primary" value="Save Changes" /></p></form></div>';
+	echo '<input type="hidden" name="action" value="update" /><input type="hidden" name="page_options" value="tbws_text,tbws_via,tbws_links,tbws_size,tbws_pages,tbws_location,tbws_style,tbws_background,tbws_border,tbws_text,tbws_shortener,tbws_api_key,tbws_login" /><p class="submit"><input type="submit" class="button-primary" value="Save Changes" /></p></form></div>';
 }
 
 function tweet_button($src=null, $via=null, $author=null, $size=null, $style=null, $shortener=null, $api_key=null, $login=null) {
