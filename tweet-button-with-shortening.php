@@ -3,7 +3,7 @@
 Plugin Name: Tweet Button with Shortening
 Plugin URI: http://tools.awe.sm/tweet-button/wordpress/
 Description: Add an official Twitter tweet button to your blog and fully configure it through your WP admin, including the ability to use it with your favorite URL shortener (currently awe.sm, bit.ly, tinyurl, su.pr, digg). This plugin is based on the great BackType Tweetcount plugin.
-Version: 0.2.1
+Version: 0.3
 Author: awe.sm
 Author URI: http://totally.awe.sm/
 */
@@ -55,6 +55,9 @@ function tbws_init() {
 		register_setting('tbws-options', 'tbws_shortener');
 		register_setting('tbws-options', 'tbws_api_key');
 		register_setting('tbws-options', 'tbws_login');
+		register_setting('tbws-options', 'tbws_lang');
+		register_setting('tbws-options', 'tbws_author_desc');
+		register_setting('tbws-options', 'tbws_recos');
 	}    
 }
 
@@ -70,6 +73,9 @@ function tbws_activate() {
 	add_option('tbws_shortener', '');
 	add_option('tbws_api_key', '');
 	add_option('tbws_login', '');
+	add_option('tbws_lang', 'en');
+	add_option('tbws_author_desc', 'Author of the post');
+	add_option('tbws_recos', '');
 }
 
 // The following two functions are adapted from the Twitter Publisher plugin
@@ -161,17 +167,21 @@ function tbws_options_page() {
 	echo '<tr valign="top"><th scope="row">Recommend Post Author</th><td><select name="tbws_author"><option value="">enabled</option><option value="false"' . ((get_option('tbws_author')=='false')?' selected':'') . '>disabled</option></select> <span class="setting-description">If the author has added a Twitter username to their profile, enabling this will add the author of a given post to the recommended users after the tweet is sent</span></td></tr>';
 	echo '<tr valign="top"><th scope="row">Count Placement</th><td><select name="tbws_size"><option value="vertical">vertical</option><option value="horizontal"' . ((get_option('tbws_size')=='horizontal')?' selected':'') . '>horizontal</option><option value="none"' . ((get_option('tbws_size')=='none')?' selected':'') . '>none</option></select></td></tr>';
 	echo '<tr valign="top"><th scope="row">Location</th><td><select name="tbws_location"><option value="top">top</option><option value="bottom"' . ((get_option('tbws_location')=='bottom')?' selected':'') . '>bottom</option><option value="topbottom"' . ((get_option('tbws_location')=='topbottom')?' selected':'') . '>top &amp; bottom</option><option value="manual"' . ((get_option('tbws_location')=='manual')?' selected':'') . '>manual</option></select> <span class="setting-description">For manual positioning, echo tweet_button(); where you would like the button to appear</span></td></tr>';
-	echo '<tr valign="top"><th scope="row">Wrapper Style</th><td><input type="text" name="tbws_style" value="' . get_option('tbws_style') . '" /> <span class="setting-description">CSS for positioning, margins, etc</span></td></tr>';
+	echo '<tr valign="top"><th scope="row">Wrapper Style</th><td><input type="text" size="45" name="tbws_style" value="' . get_option('tbws_style') . '" /> <span class="setting-description">CSS for positioning, margins, etc</span></td></tr>';
 	echo '<tr valign="top"><th scope="row">Show Button on Pages</th><td><input type="checkbox" value="true" name="tbws_pages"' . ((get_option('tbws_pages')=='true')?' checked':'true') . ' /> <span class="setting-description">Show the button on Pages as well as Posts</span></td></tr>';
-	echo '</table><p>The following options allow you to choose which URL shortener you would like to use:</p><table class="form-table">';
-	echo '<tr valign="top"><th scope="row">Shortener</th><td><select name="tbws_shortener"><option value="">none</option><option value="awesm"' . ((get_option('tbws_shortener')=='awesm')?' selected':'') . '>awe.sm (custom)</option><option value="bitly"' . ((get_option('tbws_shortener')=='bitly')?' selected':'') . '>bit.ly</option><option value="tinyurl"' . ((get_option('tbws_shortener')=='tinyurl')?' selected':'') . '>tinyurl.com</option><option value="supr"' . ((get_option('tbws_shortener')=='supr')?' selected':'') . '>su.pr</option><option value="digg"' . ((get_option('tbws_shortener')=='digg')?' selected':'') . '>digg</option></select></td></tr>';
-	echo '<tr valign="top"><th scope="row">API Key</th><td><input type="text" name="tbws_api_key" value="' . get_option('tbws_api_key') . '" /> <span class="setting-description">Required: bit.ly, awe.sm, optional: su.pr</span></td></tr>';
-	echo '<tr valign="top"><th scope="row">Login</th><td><input type="text" name="tbws_login" value="' . get_option('tbws_login') . '" /> <span class="setting-description">Required: bit.ly, optional: su.pr</span></td></tr>';
+	echo '</table><p><strong>The following options allow you to choose which URL shortener you would like to use:</strong></p><table class="form-table">';
+	echo '<tr valign="top"><th scope="row">Shortener</th><td><select name="tbws_shortener"><option value="">none</option><option value="awesm"' . ((get_option('tbws_shortener')=='awesm')?' selected':'') . '>awe.sm</option><option value="bitly"' . ((get_option('tbws_shortener')=='bitly')?' selected':'') . '>bit.ly</option><option value="tinyurl"' . ((get_option('tbws_shortener')=='tinyurl')?' selected':'') . '>tinyurl.com</option><option value="supr"' . ((get_option('tbws_shortener')=='supr')?' selected':'') . '>su.pr</option><option value="digg"' . ((get_option('tbws_shortener')=='digg')?' selected':'') . '>digg</option></select></td></tr>';
+	echo '<tr valign="top"><th scope="row">API Key</th><td><input type="text" size="75" name="tbws_api_key" value="' . get_option('tbws_api_key') . '" /><br><span class="setting-description">Required: bit.ly, awe.sm; Optional: su.pr</span></td></tr>';
+	echo '<tr valign="top"><th scope="row">Login</th><td><input type="text" size="30" name="tbws_login" value="' . get_option('tbws_login') . '" /><br><span class="setting-description">Required: bit.ly; Optional: su.pr</span></td></tr>';
+	echo '</table><p><strong>Advanced button configuration:</strong></p><table class="form-table">';
+	echo '<tr valign="top"><th scope="row">Button Language</th><td><select name="tbws_lang"><option value="en">English</option><option value="fr"' . ((get_option('tbws_lang')=='fr')?' selected':'') . '>French</option><option value="de"' . ((get_option('tbws_lang')=='de')?' selected':'') . '>German</option><option value="es"' . ((get_option('tbws_lang')=='es')?' selected':'') . '>Spanish</option><option value="ja"' . ((get_option('tbws_lang')=='ja')?' selected':'') . '>Japanese</option></select> <span class="setting-description">Select among the <a href="http://dev.twitter.com/pages/tweet_button_faq#languages" target="_blank">supported languages</a> of the tweet button</span></td></tr>';
+	echo '<tr valign="top"><th scope="row">Post Author Recommendation Description</th><td><input type="text" size="30" name="tbws_author_desc" value="' . get_option('tbws_author_desc') . '" /> <span class="setting-description">The description text that will appear before the post author\'s Twitter username in the list of recommended users after the tweet is sent (primarily for localization)</span></td></tr>';
+	echo '<tr valign="top"><th scope="row">Additional Recommended Users</th><td><input type="text" size="120" name="tbws_recos" value="' . get_option('tbws_recos') . '" /><br><span class="setting-description">A comma separated ordered list of up to 6 other Twitter usernames (e.g. \'username1:Description one,username2,username3:Description three\') you would like to recommend after the via user and post author, if activated (will only show <a href="http://dev.twitter.com/pages/tweet_button_faq#ordering-of-recommended" target="_blank">two recommended users at a time</a>)</span></td></tr>';
 	echo '</table>';
-	echo '<input type="hidden" name="action" value="update" /><input type="hidden" name="page_options" value="tbws_text,tbws_via,tbws_links,tbws_size,tbws_pages,tbws_location,tbws_style,tbws_background,tbws_border,tbws_text,tbws_shortener,tbws_api_key,tbws_login" /><p class="submit"><input type="submit" class="button-primary" value="Save Changes" /></p></form></div>';
+	echo '<input type="hidden" name="action" value="update" /><input type="hidden" name="page_options" value="tbws_via,tbws_author,tbws_size,tbws_location,tbws_style,tbws_pages,tbws_shortener,tbws_api_key,tbws_login,tbws_lang,tbws_author_desc,tbws_recos" /><p class="submit"><input type="submit" class="button-primary" value="Save Changes" /></p></form></div>';
 }
 
-function tweet_button($src=null, $via=null, $author=null, $size=null, $style=null, $shortener=null, $api_key=null, $login=null) {
+function tweet_button($src=null, $via=null, $author=null, $size=null, $style=null, $shortener=null, $api_key=null, $login=null, $lang=null, $author_desc=null, $recos=null) {
 	global $post;
 	$url = '';
 	$cnt = null;
@@ -179,12 +189,15 @@ function tweet_button($src=null, $via=null, $author=null, $size=null, $style=nul
 	// let users override these vars when calling manually
 	//$text = ($text === null) ? get_option('tbws_text') : $text;
 	$via = ($via === null) ? get_option('tbws_via') : $via;
-	$author = ($author === null) ? get_option('tbws_author') : $via;
+	$author = ($author === null) ? get_option('tbws_author') : $author;
 	$size = ($size === null) ? get_option('tbws_size') : $size;
 	$style = ($style === null) ? get_option('tbws_style') : $style;
 	$shortener = ($shortener === null) ? get_option('tbws_shortener') : $shortener;
 	$api_key = ($api_key === null) ? get_option('tbws_api_key') : $api_key;
 	$login = ($login === null) ? get_option('tbws_login') : $login;
+	$lang = ($lang === null) ? get_option('tbws_lang') : $lang;
+	$author_desc = ($author_desc === null) ? get_option('tbws_author_desc') : $author_desc;
+	$recos = ($recos === null) ? get_option('tbws_recos') : $recos;
 	
 	if (get_post_status($post->ID) == 'publish') {
 		$url = get_permalink();
@@ -238,6 +251,8 @@ function tweet_button($src=null, $via=null, $author=null, $size=null, $style=nul
 	$tweet_button .= ' data-text="' . wp_specialchars($title, '1') . '"'; 
 	
 	$tweet_button .= ' data-count="' . wp_specialchars($size, '1') . '"'; 
+
+	$tweet_button .= ' data-lang="' . wp_specialchars($lang, '1') . '"'; 
 	
 	if ($via && $via != '') {
 		//if the twitter username starts with an @, remove it.
@@ -247,15 +262,24 @@ function tweet_button($src=null, $via=null, $author=null, $size=null, $style=nul
 		$tweet_button .= ' data-via="' . wp_specialchars($via, '1') . '"';
 	}
 	
-	if ($author != 'false') {
-		//get author
-    	$author = get_userdata($post->post_author);
-		//check if author's twitter username has been filled in
-        if(!empty($author->twitter_username)) {
-			$tweet_button .= ' data-related="' . wp_specialchars($author->twitter_username, '1') . ':Author of the post"';
-        } 		
-	} 
-	
+	if ($author != 'false' || $recos != '') {
+		$tweet_button .= ' data-related="';
+		if ($author != 'false') {
+			//get author
+    		$author = get_userdata($post->post_author);
+			//check if author's twitter username has been filled in
+        	if (!empty($author->twitter_username)) {
+        		//check author recommendation description
+				if ($author_desc != '') {
+					$author_desc = ':' . wp_specialchars($author_desc,'1');
+				}
+				$tweet_button .= wp_specialchars($author->twitter_username, '1') . $author_desc . ',';
+        	}
+		}
+		//add additional recommended users if present
+		$tweet_button .= wp_specialchars($recos,'1') . '"';
+	}
+		
 	$tweet_button .= '>Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>';
 	
 	if ($style !== '') {

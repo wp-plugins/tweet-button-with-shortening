@@ -3,7 +3,7 @@ Contributors: snowballfactory
 Tags: twitter, tweets, retweets, tweet button, awe.sm, bit.ly, digg, su.pr, tinyurl, url shortener, counter, badge, count, tweet count, tweetcount, tweet, bit.ly pro, social, share, sharing
 Requires at least: 2.7
 Tested up to: 3.0.1
-Stable tag: 0.2.1
+Stable tag: 0.3
 
 Adds a fully configurable official Twitter tweet button to your blog, supports shortening via awe.sm, bit.ly, tinyurl, su.pr, and digg.
 
@@ -18,6 +18,8 @@ Features:
 * Specify the via Twitter username to be included at the end of the tweet and in the recommended users to follow screen after the tweet 
 * Optionally add the author of a given post to the recommended users to follow screen after the tweet (requires the author to enter their Twitter username in their WP profile)
 * Disable the button on Pages
+* Localize the button in the languages Twitter supports (currently English, French, German, Spanish, Japanese)
+* Specify additional user accounts to recommend
 
 This plugin is heavily based off the excellent [BackType Tweetcount](http://wordpress.org/extend/plugins/backtype-tweetcount/) and borrows from the also excellent [Twitter Publisher](http://wordpress.org/extend/plugins/twitter-publisher/). It is developed by the folks behind [awe.sm](http://totally.awe.sm).
 
@@ -49,8 +51,14 @@ If you're having issues with this plugin, please let us know at support+tbws [at
 
 == Changelog ==
 
+= 0.3 =
+* Added support for tweet button localization (English, French, German, Spanish, Japanese)
+* You can now customize the description of the author in the recommended users list (primarily for localization, default is still "Author of the post")
+* You can now add a comma separated list of additional Twitter users to recommend (the button will accept up to 6 total and only show 2 at a time)
+* Fixed a bug that prevented you from disabling the option to recommend the post author
+
 = 0.2.1 =
-Corrected a bug with the option to display the button on Pages
+* Corrected a bug with the option to display the button on Pages
 
 = 0.2 =
-First public release
+* First public release
