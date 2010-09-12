@@ -3,7 +3,7 @@
 Plugin Name: Tweet Button with Shortening
 Plugin URI: http://tools.awe.sm/tweet-button/wordpress/
 Description: Add an official Twitter tweet button to your blog and fully configure it through your WP admin, including the ability to use it with your favorite URL shortener (currently awe.sm, bit.ly, tinyurl, su.pr, digg). This plugin is based on the great BackType Tweetcount plugin.
-Version: 0.3
+Version: 1.0
 Author: awe.sm
 Author URI: http://totally.awe.sm/
 */
@@ -205,12 +205,9 @@ function tweet_button($src=null, $via=null, $author=null, $size=null, $style=nul
 		
 		if ((function_exists('curl_init') || function_exists('file_get_contents')) && function_exists('unserialize')) {
 
-			if ($shortener && get_post_meta($post->ID, 'tbws_short_url', true) == '') {
+			if ($shortener && $shortener != 'awesm' && get_post_meta($post->ID, 'tbws_short_url', true) == '') {
 				$short_url = null;
 				switch ($shortener) {
-					case 'awesm':
-						$short_url = tbws_shorten_awesm($url, $api_key);
-					break;
 					case 'bitly':
 						$short_url = tbws_shorten_bitly($url, $api_key, $login);
 					break;
@@ -238,32 +235,39 @@ function tweet_button($src=null, $via=null, $author=null, $size=null, $style=nul
 		$tweet_button = '';
 	}
 
-	$tweet_button .= '<a href="http://twitter.com/share" class="twitter-share-button"';
+	$tweet_button .= '<iframe allowtransparency="true" frameborder="0" scrolling="no" ';
 	
-	if ($shortener && get_post_meta($post->ID, 'tbws_short_url', true) != '') {
-		$tweet_button .= ' data-url="' . wp_specialchars(get_post_meta($post->ID, 'tbws_short_url', true), '1') . '"';
+    if ($shortener == 'awesm') {
+    	// If using awe.sm, go to the awe.sm-powered button
+    	$tweet_button .= 'src="http://tools.awe.sm/tweet-button/files/tweet_button.html?awesmapikey=' . wp_specialchars($api_key, '1') . '&';
+    } else {
+    	$tweet_button .= 'src="http://platform.twitter.com/widgets/tweet_button.html?';
+    } 
+	
+	if ($shortener && $shortener != 'awesm' && get_post_meta($post->ID, 'tbws_short_url', true) != '') {
+		$tweet_button .= 'url=' . wp_specialchars(get_post_meta($post->ID, 'tbws_short_url', true), '1');
 	} else {
-		$tweet_button .= ' data-url="' . wp_specialchars($url, '1') . '"';
+		$tweet_button .= 'url=' . wp_specialchars($url, '1');
 	}
 
-    $tweet_button .= ' data-counturl="' . wp_specialchars($url, '1') . '"';
+    $tweet_button .= '&counturl=' . wp_specialchars($url, '1');
 	
-	$tweet_button .= ' data-text="' . wp_specialchars($title, '1') . '"'; 
+	$tweet_button .= '&text=' . wp_specialchars($title, '1'); 
 	
-	$tweet_button .= ' data-count="' . wp_specialchars($size, '1') . '"'; 
+	$tweet_button .= '&count=' . wp_specialchars($size, '1'); 
 
-	$tweet_button .= ' data-lang="' . wp_specialchars($lang, '1') . '"'; 
+	$tweet_button .= '&lang=' . wp_specialchars($lang, '1'); 
 	
 	if ($via && $via != '') {
 		//if the twitter username starts with an @, remove it.
     	if(substr($via, 0, 1) == '@') {
         	$via = substr($via, 1);
     	}
-		$tweet_button .= ' data-via="' . wp_specialchars($via, '1') . '"';
+		$tweet_button .= '&via=' . wp_specialchars($via, '1');
 	}
 	
 	if ($author != 'false' || $recos != '') {
-		$tweet_button .= ' data-related="';
+		$tweet_button .= '&related=';
 		if ($author != 'false') {
 			//get author
     		$author = get_userdata($post->post_author);
@@ -277,10 +281,82 @@ function tweet_button($src=null, $via=null, $author=null, $size=null, $style=nul
         	}
 		}
 		//add additional recommended users if present
-		$tweet_button .= wp_specialchars($recos,'1') . '"';
+		$tweet_button .= wp_specialchars($recos,'1');
 	}
-		
-	$tweet_button .= '>Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>';
+
+	switch($lang){
+		case 'es':
+			switch ($size){
+				case 'vertical':
+				$tweet_button .= '" style="width:64px; height:62px;"></iframe>';
+				break;
+			case 'none':
+				$tweet_button .= '" style="width:64px; height:20px;"></iframe>';
+				break;
+			case 'horizontal':
+			default:
+				$tweet_button .= '" style="width:110px; height:20px;"></iframe>';
+				break;
+			}	
+			break;
+		case 'ja':
+			switch ($size){
+				case 'vertical':
+				$tweet_button .= '" style="width:80px; height:62px;"></iframe>';
+				break;
+			case 'none':
+				$tweet_button .= '" style="width:80px; height:20px;"></iframe>';
+				break;
+			case 'horizontal':
+			default:
+				$tweet_button .= '" style="width:130px; height:20px;"></iframe>';
+				break;
+			}	
+			break;
+		case 'de':
+			switch ($size){
+				case 'vertical':
+				$tweet_button .= '" style="width:67px; height:62px;"></iframe>';
+				break;
+			case 'none':
+				$tweet_button .= '" style="width:67px; height:20px;"></iframe>';
+				break;
+			case 'horizontal':
+			default:
+				$tweet_button .= '" style="width:110px; height:20px;"></iframe>';
+				break;
+			}	
+			break;
+		case 'fr':
+			switch ($size){
+				case 'vertical':
+				$tweet_button .= '" style="width:65px; height:62px;"></iframe>';
+				break;
+			case 'none':
+				$tweet_button .= '" style="width:65px; height:20px;"></iframe>';
+				break;
+			case 'horizontal':
+			default:
+				$tweet_button .= '" style="width:110px; height:20px;"></iframe>';
+				break;
+			}	
+			break;
+		case 'en':
+		default:
+			switch ($size){
+				case 'vertical':
+				$tweet_button .= '" style="width:55px; height:62px;"></iframe>';
+				break;
+			case 'none':
+				$tweet_button .= '" style="width:55px; height:20px;"></iframe>';
+				break;
+			case 'horizontal':
+			default:
+				$tweet_button .= '" style="width:110px; height:20px;"></iframe>';
+				break;
+			}	
+			break;		
+	}
 	
 	if ($style !== '') {
 		$tweet_button .= '</div>';
@@ -301,36 +377,6 @@ function tbws_urlopen($url) {
 	} else {
 		return file_get_contents($url);
 	}
-}
-
-
-// Code added by @jhstrauss
-function tbws_shorten_awesm($url, $api_key) {
-	if (function_exists('curl_init')) {
-		$awesm_vars = array(
-			"version" => "1",
-			"target" => $url,
-			"share_type" => "twitter",
-			"create_type" => "tweet-button",
-			"campaign" => "static",
-			"api_key" => $api_key
-		);
-
-		$awesm_create = curl_init();
-		curl_setopt($awesm_create, CURLOPT_URL, "http://create.awe.sm/url.txt");
-		curl_setopt($awesm_create, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($awesm_create, CURLOPT_TIMEOUT, 30);
-		curl_setopt($awesm_create, CURLOPT_POST, 1); 
-		curl_setopt($awesm_create, CURLOPT_POSTFIELDS, $awesm_vars);
-		$awesm_create_response = curl_exec($awesm_create);
-		$awesm_create_response_code = curl_getinfo($awesm_create, CURLINFO_HTTP_CODE);
-		curl_close($awesm_create);
-		// Verify HTTP response code received
-		if ($awesm_create_response_code == 200) {
-			return $awesm_create_response;
-		}		
-	}
-	return false;
 }
 
 // Code added by @michaelmontano
