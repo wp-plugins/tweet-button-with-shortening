@@ -3,7 +3,7 @@ Contributors: snowballfactory
 Tags: twitter, tweets, retweets, tweet button, awe.sm, bit.ly, digg, su.pr, tinyurl, url shortener, counter, badge, count, tweet count, tweetcount, tweet, bit.ly pro, social, share, sharing
 Requires at least: 2.7
 Tested up to: 3.0.1
-Stable tag: 0.3
+Stable tag: 1.0
 
 Adds a fully configurable official Twitter tweet button to your blog, supports shortening via awe.sm, bit.ly, tinyurl, su.pr, and digg.
 
@@ -50,6 +50,10 @@ Add a custom field to your post named `tbws_short_url` and enter the short URL y
 If you're having issues with this plugin, please let us know at support+tbws [at] awe.sm
 
 == Changelog ==
+
+= 1.0 =
+* Improved performance by embedding the frame directly instead of the Javascript.
+* Switched to using a unique awe.sm link per tweet instead of caching it per post.
 
 = 0.3 =
 * Added support for tweet button localization (English, French, German, Spanish, Japanese)
